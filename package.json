@@ -1,0 +1,26 @@
+{
+    "name": "steamboat-docs",
+    "version": "1.0.0",
+    "preferGlobal": true,
+    "bin": {
+        "steamdocs": "./bin/index.js"
+    },
+    "dependencies": {
+        "bootstrap": "^4.3.1",
+        "bootstrap-vue": "^2.0.0-rc.26",
+        "colors": "^1.3.3",
+        "commander": "^2.20.0",
+        "core-js": "^2.6.5",
+        "inquirer": "^6.5.0",
+        "tmp": "^0.1.0",
+        "vue": "^2.6.10",
+        "vue-router": "^3.0.3"
+    },
+    "devDependencies": {
+        "@vue/cli-service": "^3.9.3",
+        "@vue/cli-plugin-babel": "^3.9.0",
+        "node-sass": "^4.9.0",
+        "sass-loader": "^7.1.0",
+        "vue-template-compiler": "^2.6.10"
+    }
+}
