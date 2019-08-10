@@ -10,7 +10,7 @@
 export default {
   components: {
   },
-  name: 'DemoTest',
+  name: 'Sub Category 2',
   data() {
     return {
 
