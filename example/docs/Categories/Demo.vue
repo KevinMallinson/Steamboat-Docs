@@ -1,7 +1,5 @@
 <template>
-  <div class="hello">
-    <h1>Test</h1>
-  </div>
+    <h1>Demo</h1>
 </template>
 
 <script>
@@ -10,7 +8,7 @@
 export default {
   components: {
   },
-  name: 'Sub Category 1',
+  name: 'SubCategory1',
   data() {
     return {
 
