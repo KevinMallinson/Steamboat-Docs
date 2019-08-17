@@ -26,13 +26,16 @@
             let navbar = createElement('nav', { 'class': [ 'col-md-2', 'd-none', 'd-md-block', 'bg-light', 'sidebar' ] }, [ searchBar, nav ]);
             
             //Depth First Search.
+            let parent = null;
             let stack = [ ...Vue.prototype.NAV_ITEMS, null ];
 
             while(stack.length > 0) {
                 let currentNode = stack.shift();
 
+                //We use a null to indicate we've finished at this depth (i.e. this <ul>)
                 if (currentNode == null) {
-                    nav = nav.parent;
+                    //now we're at the previous <ul>
+                    nav = parent;
                     continue;
                 }
                     
@@ -40,14 +43,22 @@
                     createElement('router-link', { 'class': ['nav-link'], props: { to: currentNode.link }, } , [ currentNode.text ]) 
                 ]);
 
-                selectedItem.parent = nav;
+                //add the <li> to the selected <ul>
                 nav.children.push(selectedItem);
 
                 //We use a single null to let us know when we need to reduce depth
                 if (currentNode.children && currentNode.children.length > 0) {
+
+                    //Since we have children, put the children first, separated by a null, then the existing stack.
+                    //This essentially allows us to use a depth first search.
                     stack  = [...currentNode.children, null, ...stack];
+
+                    //Because we have children, we need to assign what their parent is.
+                    //This allows us to go back to the previous <ul> (as above) and continue where we left off.
+                    parent = nav;
+
+                    //Next, we need to add a new <ul>, and add it to the current <li>, in effect, making another nested list.
                     nav = createElement('ul', { 'class': [ 'nav', 'flex-column', 'ml-3' ] }, []);  
-                    nav.parent = selectedItem;
                     selectedItem.children.push(nav);
                 }
             }
