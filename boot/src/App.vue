@@ -13,7 +13,7 @@
 	export default {
 		computed: {
 			layout() {
-				return (this.$route.meta.layout || DEFAULT_LAYOUT) + '-layout';
+				return (this.$route.meta.layout.toLowerCase() || DEFAULT_LAYOUT) + '-layout';
 			}
 		}
 	};

@@ -1,33 +1,46 @@
 <template>
-    <b-col lg="2">
-        {{content}}
-
-        <b-nav type="light" variant="light" class="flex-column right-navbar">
-            <b-nav-item active>Active</b-nav-item>
-            <b-nav-item>Link</b-nav-item>
-            <b-nav-item>Another Link</b-nav-item>
-            <b-nav-item disabled>Disabled</b-nav-item>
-        </b-nav>
-    </b-col>
+    <div class="toc-bar">
+        <nav>
+            <ul class="nav">
+                <template v-for="(item, index) in content">
+                    <toc-tree :node="item" :key="index"></toc-tree>
+                </template>
+            </ul>
+        </nav>
+    </div>
 </template>
 
+
 <script>
+    import TocTree from "./TocTree";  
+
     export default {
+        components: {
+            TocTree
+        },
         props: {
             content: {
                 required: true
+            },
+            activeHeader: {
+                required: true,
+                type: String
+            }
+        },
+        watch: {
+            activeHeader: function (val) {
+                console.log('watched');
             }
         }
     }
 </script>
 
 <style lang="scss">
-    $navHeight: 56px;
+    .toc-bar li {
+        list-style: none;
+    }
 
-    .right-navbar {
-        position:sticky;
-        top: $navHeight;
-        min-height: calc(100vh - #{$navHeight});
+    .toc-bar {
         border-left: 1px solid rgba(0, 0, 0, 0.05);
     }
 </style>

@@ -3,16 +3,23 @@
 		<nav-bar />
 
 		<b-container fluid class="p-0 site-container">
-			<b-row no-gutters>
-				<side-bar />
 
+			<b-row no-gutters>
+				<b-col lg="2">
+					<div class="sidebar-top-offset sticky-top">
+						<side-bar />
+					</div>
+				</b-col>
 
 				<b-col lg="8" class="p-3 content-container" ref="content">
 					<slot />
-				</b-col>
+				</b-col>	
 				
-
-				<!-- <toc-bar :content="tocItems"/> -->
+				<b-col lg="2" v-if="!hideToc">
+					<div class="sidebar-top-offset sticky-top">
+						<toc-bar v-if="tocItems" :content="tocItems" :activeHeader="activeElement"/>
+					</div>
+				</b-col>
 			</b-row>
 		</b-container>
 	</div>
@@ -30,56 +37,64 @@
 			SideBar,
 			TocBar
 		},
+		data() {
+			return {
+				tocItems: [],
+				contentRef: null,
+				activeElement: ''
+			}
+		},
+		props: {
+			hideToc: {
+				required: false,
+				type: Boolean
+			}
+		},
+		created() {
+			window.addEventListener('scroll', this.handleScroll);
+		},
+		destroyed() {
+			window.removeEventListener('scroll', this.handleScroll);
+		},
 		async mounted() {
-			//We don't get the refs instantly... wait for the next tick and we will have it
 			await this.$nextTick();
-			let content = this.$refs.content;
+			this.contentRef = this.$refs.content;
 
-			//Get all the headers:
-			let headers = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
-
-			//Map their id's and text in to an array of objects:
+			let headers = this.contentRef.querySelectorAll('h1, h2, h3, h4, h5, h6');
 			headers = [...headers].map(x => ({
 				id: x.id,
 				text: x.innerText,
-				tag: Number(x.tagName.toLowerCase().slice(1)) //tag is a number now
+				tag: Number(x.tagName.toLowerCase().slice(1))
 			}));
 
-			this.createTocItems(headers);
+			this.tocItems = this.createTocItems(headers);
 		},
 		methods: {
+			//This is voodoo.
 			createTocItems(arr) {
-				//Set all children to be a blank array.
 				arr.forEach(x => { x.children = [] });
-
-				//We assume the first elements tag is the parent.
-				//I.e. if it is h1, then we can have h1(sibling)...h6(children)
-				//However a first element with a number higher (e.g. h4) followed by a lower (e.g. h1) will not work.
 				let offset = -arr[0].tag;
-
-				//Our final array.
 				let result = [];
-
-				//levels is a helper array. it is unused except for temporary mapping.
-				//`levels[0].children` is a reference to `result`
 				let levels = [{ children: result }];
-
 				arr.forEach(o => {
-					//Assign next, levels can only contain maximum 7 elements (assuming root of h1):
-					//First element, which `children` property is a reference to our result array.
-					//Second through 7th element is essentially h1,h2,h3,h4,h5,h6.
 					levels[o.tag + offset + 1] = o;
-
-					//Assign children,
-					//We are basically assigning the children of an element,
-					//which currently is referenced as `result` array, or any element within `result[n].children` (or their children)
-					//If we have a tag the same as what already exists in `levels`, the reference in `levels` will be overwritten
-					//but the reference is still in tact in `result`. 
 					levels[o.tag + offset].children.push(o);
 				});
-				
-				console.log(result);
 				return result;
+			},
+			handleScroll() {
+				const els = document.querySelectorAll('.content-container h1, .content-container h2, .content-container h3, .content-container h4, .content-container h5, .content-container h6')
+				els.forEach((el) => {
+					const elTop = el.getBoundingClientRect().top
+					const elBottom = el.getBoundingClientRect().bottom
+					
+					//If the top is <= 0, then it's above me
+					//If the bottom is >= 0, then it's below me
+					//If both, then it's exactly where our viewport is.
+					if (elTop <= 0 && elBottom >= 0) {
+						this.activeElement = el.id;
+					} 
+				})
 			}
 		}
 	};
@@ -88,6 +103,10 @@
 
 <style lang="scss">
 	$navHeight: 56px;
+
+	.sidebar-top-offset {
+		top: 66px;
+	}
 
 	html, body {
 		height: 100vh;
@@ -100,5 +119,10 @@
 
 	.content-container {
 		min-height: calc(100vh - #{$navHeight});
+	}
+
+	.sticky-bar {
+		position: fixed;
+		width:100%;
 	}
 </style>
