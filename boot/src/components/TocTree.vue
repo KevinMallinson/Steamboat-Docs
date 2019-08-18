@@ -1,9 +1,9 @@
 <template>
     <li class="toc-tree">
-        <a class="toc-link" :href="'#' + node.id">{{ node.text }}</a>
+        <a class="toc-link" :href="'#' + node.id" :class="{ 'active-item': node.id == activeHeader }">{{ node.text }}</a>
 
         <ul v-if="node.children && node.children.length">
-            <node v-for="(child, index) in node.children" :node="child" :key="index"></node>
+            <node v-for="(child, index) in node.children" :node="child" :key="index" :activeHeader="activeHeader"></node>
         </ul>
     </li>
 </template>
@@ -12,7 +12,14 @@
     export default {
         name: "node",
         props: {
-            node: Object
+            node: {
+                required: true,
+                type: Object
+            },
+            activeHeader: {
+                required: true,
+                type: String
+            }
         }
     };
 </script>
@@ -28,5 +35,10 @@
     .toc-link {
         padding: .125rem 1.5rem;
         color: #99979c;
+    }
+
+    .active-item {
+        color: #68508c;
+        text-decoration: underline;
     }
 </style>

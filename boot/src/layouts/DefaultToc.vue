@@ -85,6 +85,11 @@
 			handleScroll() {
 				const els = document.querySelectorAll('.content-container h1, .content-container h2, .content-container h3, .content-container h4, .content-container h5, .content-container h6')
 				els.forEach((el) => {
+					//Give the matched elements an offset, to compensate for the topbar. 
+					//This makes clicking the anchor go to the correct spot.
+					el.style.paddingTop = "75px";
+					el.style.marginTop = "-75px";
+
 					const elTop = el.getBoundingClientRect().top
 					const elBottom = el.getBoundingClientRect().bottom
 					

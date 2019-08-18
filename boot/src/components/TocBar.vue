@@ -3,7 +3,7 @@
         <nav>
             <ul class="nav">
                 <template v-for="(item, index) in content">
-                    <toc-tree :node="item" :key="index"></toc-tree>
+                    <toc-tree :node="item" :key="index" :activeHeader="activeHeader"></toc-tree>
                 </template>
             </ul>
         </nav>
@@ -25,11 +25,6 @@
             activeHeader: {
                 required: true,
                 type: String
-            }
-        },
-        watch: {
-            activeHeader: function (val) {
-                console.log('watched');
             }
         }
     }
